@@ -1,0 +1,868 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Money Bior Hardware Management System</title>
+
+
+    
+
+
+
+<style>
+[hidden]{display:none!important}
+.auth-screen{min-height:100vh;display:flex;align-items:center;justify-content:center;gap:clamp(28px,6vw,90px);padding:40px 6%;box-sizing:border-box;background:linear-gradient(90deg,rgba(4,25,48,.82),rgba(5,28,51,.52)),url('https://images.unsplash.com/photo-1504148455328-c376907d081c?auto=format&fit=crop&w=2000&q=85') center/cover fixed,url('images/dashboard-bg.jpg') center/cover fixed #12233d;font-family:Arial,sans-serif;color:#fff}
+.auth-brand{max-width:440px;text-align:center;text-shadow:0 2px 10px #000}
+.auth-brand h1{font-size:clamp(38px,5vw,64px);margin:14px 0 8px}.auth-brand h2{font-size:clamp(18px,2vw,26px);margin:0}.auth-brand p{color:#ffd044;font-weight:bold;font-style:italic}
+.brand-mark,.auth-logo{width:96px;height:96px;border:4px solid #f7b817;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-direction:column;margin:0 auto;background:#09284b;color:#ffc21c;font-size:28px;font-weight:bold;box-shadow:0 5px 18px #0005}
+.brand-mark span{font-size:22px;color:white}.brand-mark small,.auth-logo small{font-size:13px;color:white}
+.auth-card{width:min(100%,430px);box-sizing:border-box;background:rgba(255,255,255,.97);color:#122c4b;padding:30px;border-radius:16px;box-shadow:0 18px 55px #0006}
+.auth-logo{width:58px;height:58px;font-size:18px;border-width:3px;margin-bottom:14px}.auth-logo small{font-size:9px}
+.auth-card h2{text-align:center;margin:8px 0;color:#0a2c50}.auth-card>p{text-align:center;color:#65758a;margin:0 0 22px}
+.auth-form{display:flex;flex-direction:column;gap:8px}.auth-form label{font-size:13px;font-weight:700;margin-top:4px}.auth-form input{width:100%;box-sizing:border-box;padding:12px 13px;border:1px solid #cbd6e3;border-radius:7px;font-size:15px;background:#fff;color:#162c45;outline-color:#0874df}
+.auth-primary,.auth-actions button{border:0;border-radius:7px;padding:12px 10px;font-weight:bold;color:#fff;cursor:pointer}.auth-primary{background:#075db5;margin-top:8px;font-size:16px}.auth-primary:hover{background:#064b91}
+.auth-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:6px}.auth-register{background:#07985a}.auth-reset{background:#e99a0a}.auth-cancel{background:#df3737}.auth-login{background:#075db5}
+.auth-form [role=status]{min-height:18px;margin:5px 0 0;font-size:13px;color:#b42318}
+.dashboard-brand-mark{float:right;width:78px;height:78px;border-radius:50%;background:#09284b;border:4px solid #f7b817;color:#ffbf16;display:flex;align-items:center;justify-content:center;flex-direction:column;font-weight:bold;font-size:22px;margin:0 10px 10px 20px}
+.dashboard-brand-mark span{font-size:20px;color:white}.dashboard-brand-mark small{font-size:10px;color:white}
+.logout-menu{margin-top:20px;border-top:1px solid #ffffff30}
+@media(max-width:800px){.auth-screen{flex-direction:column;gap:24px;padding:28px 16px}.auth-brand h1{font-size:38px}.auth-brand h2{font-size:18px}.auth-card{padding:24px}.dashboard-brand-mark{width:58px;height:58px;font-size:17px}}
+</style>
+
+
+<style id="moneybior-layout-fixes">
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f3f5f8;color:#172033}
+  [hidden]{display:none!important}
+  .header{min-height:76px;padding:14px 24px;background:#14253b;color:#fff;display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .logo{display:flex;align-items:center;gap:12px}.logo-icon{width:48px;height:48px;border-radius:50%;border:3px solid #f7b817;background:#09284b;color:#ffc21c;display:grid;place-items:center;font-weight:bold}
+  .logo h1{margin:0;font-size:24px}.logo small{color:#e6edf5}
+  #appShell{min-height:100vh}.sidebar{position:fixed;top:76px;bottom:0;left:0;width:245px;padding:20px 14px;background:#18283d;color:#fff;overflow-y:auto}
+  .sidebar h3{font-size:13px;letter-spacing:1px;color:#cbd5e1;padding:0 10px}
+  .menu{display:block;width:100%;text-align:left;border:0;border-radius:6px;margin:5px 0;padding:13px 12px;background:transparent;color:#eaf0f7;cursor:pointer;font-size:15px}
+  .menu:hover,.menu.active{background:#c51f32;color:#fff}.main{margin-left:245px;padding:26px;min-height:calc(100vh - 76px);background:linear-gradient(120deg,#f4f6f9,#fff)}
+  .page{display:none}.page.active{display:block}.welcome,.box,.page-header,.report-preview{background:#fff;border-radius:10px;padding:22px;margin-bottom:22px;box-shadow:0 3px 14px #15223812}
+  .welcome{border-left:6px solid #c51f32;min-height:130px}.welcome h2,.box h2,.page-header h2{margin-top:0}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px}.card,.report-card{background:#fff;padding:20px;border-radius:10px;box-shadow:0 3px 14px #15223812;border-top:4px solid #c51f32}.card h3{font-size:15px;margin-top:0}.number{font-size:28px;font-weight:bold;color:#c51f32}
+  .form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:18px 0}.form-group{display:flex;flex-direction:column;gap:7px;min-width:0}.form-group label{font-weight:700;font-size:14px}.form-group input,.form-group select,.form-group textarea{width:100%;padding:11px;border:1px solid #cbd5e1;border-radius:6px;background:#fff;font:inherit}
+  .btn,.report-card button{border:0;border-radius:6px;background:#c51f32;color:#fff;padding:11px 16px;margin:5px 8px 5px 0;cursor:pointer;font-weight:bold}.btn:hover,.report-card button:hover{background:#a91829}
+  .report-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:22px}.report-card h3{margin-top:0}.report-preview table{width:100%;border-collapse:collapse}.report-preview th,.report-preview td{text-align:left;padding:11px;border-bottom:1px solid #e2e8f0}.report-preview th{background:#f1f5f9}
+  @media(max-width:800px){.sidebar{position:static;width:100%;display:flex;flex-wrap:wrap;gap:4px}.sidebar h3{width:100%}.menu{width:auto;flex:1 1 140px}.main{margin-left:0;padding:14px}.header{padding:12px}.form-grid{grid-template-columns:1fr}.dashboard-brand-mark{float:none;margin:0 0 12px auto}}
+.table-wrap{width:100%;overflow-x:auto}.data-table{width:100%;border-collapse:collapse;min-width:520px}.data-table th,.data-table td{padding:10px;border-bottom:1px solid #e2e8f0;text-align:left;vertical-align:top}.data-table th{background:#f1f5f9;color:#172033}.delete-btn{background:#b91c1c;color:#fff;border:0;border-radius:5px;padding:6px 9px;cursor:pointer}.empty-row{text-align:center;color:#64748b;padding:18px!important}.report-preview{overflow:hidden}.report-preview h3{margin-top:0}@media print{.sidebar,.header,.btn,.menu{display:none!important}.main{margin:0;padding:0}.page{display:none!important}#reportView.page.active{display:block!important}.no-print{display:none!important}.report-preview{box-shadow:none}.print-head{display:block!important}}
+.print-head{display:none;text-align:center;font-size:20px;margin-bottom:8px}.print-date{color:#64748b;font-size:13px;margin:0 0 10px}
+/* ---- XAMPP version additions ---- */
+#dashboard{min-height:calc(100vh - 128px);padding:22px;border-radius:12px;background:linear-gradient(rgba(8,20,40,.30),rgba(8,20,40,.30)),url('https://images.unsplash.com/photo-1504148455328-c376907d081c?auto=format&fit=crop&w=2000&q=85') center/cover no-repeat,url('images/dashboard-bg.jpg') center/cover no-repeat,#12233d}
+#dashboard .cards{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+#dashboard .welcome,#dashboard .card{background:rgba(255,255,255,.95)}
+.auth-card select{width:100%;padding:12px 13px;border:1px solid #cbd6e3;border-radius:7px;font-size:15px;background:#fff;color:#162c45}
+.auth-card.wide{max-height:92vh;overflow-y:auto}
+.auth-form [role=status].ok{color:#1b7a2f}
+.count-pill{display:inline-block;margin-left:8px;padding:2px 10px;border-radius:999px;background:#e8f0ff;color:#075db5;font-size:13px;font-weight:700;vertical-align:middle}
+.auth-card #newUsersBox{margin:16px 0 0;padding:12px;background:#f1f5f9;box-shadow:none;border-radius:8px}
+.auth-card #newUsersBox h3{font-size:15px;margin:0 0 8px}
+.auth-card .data-table{min-width:0;font-size:13px}.auth-card .data-table th,.auth-card .data-table td{padding:6px}
+.refresh-btn{margin-left:10px;padding:4px 10px;border:1px solid #075db5;border-radius:6px;background:#fff;color:#075db5;font-size:12px;font-weight:700;cursor:pointer;vertical-align:middle}.refresh-btn:hover{background:#075db5;color:#fff}
+.stamp{margin-left:10px;font-size:12px;font-weight:400;color:#64748b;vertical-align:middle}
+.report-card.selected{outline:3px solid #075db5;box-shadow:0 6px 20px #075db533}
+.report-card button{transition:transform .1s}.report-card button:active{transform:scale(.96)}
+.toast{position:fixed;right:20px;bottom:20px;max-width:340px;padding:14px 18px;border-radius:8px;background:#1b7a2f;color:#fff;font-weight:700;box-shadow:0 6px 24px #0004;opacity:0;transform:translateY(20px);pointer-events:none;transition:.25s;z-index:99}
+.toast.show{opacity:1;transform:none}.toast.bad{background:#b91c1c}
+@keyframes newrow{0%,60%{background:#fff3b0}100%{background:transparent}}
+tr.new-row td{animation:newrow 3s ease-out}
+.tools{display:flex;gap:10px;margin-top:10px}.tools input{flex:1 1 260px;padding:11px;border:1px solid #cbd5e1;border-radius:6px;font:inherit}
+</style>
+
+</head>
+<body>
+<div id="authScreen" class="auth-screen">
+  <div class="auth-brand">
+    <div class="brand-mark">⌂<span>MB</span><small>33M</small></div>
+    <h1>Money Bior</h1>
+    <h2>Hardware Management System</h2>
+    <p>Build Better · Manage Smarter</p>
+  </div>
+  <div class="auth-card wide">
+    <div class="auth-logo">⌂ <b>MB</b><small>33M</small></div>
+    <h2 id="authTitle">Welcome Back</h2>
+    <p id="authSubtitle">Login to access your management dashboard</p>
+    <form id="loginForm" class="auth-form">
+      <label for="loginUsername">Username</label>
+      <input id="loginUsername" autocomplete="username" required placeholder="Enter username">
+      <label for="loginPassword">Password</label>
+      <input id="loginPassword" type="password" autocomplete="current-password" required placeholder="Enter password">
+      <button class="auth-primary" type="submit">Login</button>
+      <div class="auth-actions">
+        <button type="button" class="auth-register" onclick="showAuthForm('register')">New User</button>
+        <button type="button" class="auth-reset" onclick="showAuthForm('reset')">Reset</button>
+        <button type="button" class="auth-cancel" onclick="cancelAuth()">Cancel</button>
+      </div>
+      <p id="authMessage" role="status"></p>
+    </form>
+    <form id="registerForm" class="auth-form" hidden>
+      <label for="regUserId">User ID</label><input id="regUserId" required placeholder="e.g. U001">
+      <label for="regFullName">Full name</label><input id="regFullName" required placeholder="Enter full name">
+      <label for="regUsername">Username</label><input id="regUsername" required autocomplete="username" placeholder="Choose username">
+      <label for="regRole">Role</label>
+      <select id="regRole" required><option value="">Select Role</option><option>Administrator</option><option>Manager</option><option>Cashier</option><option>Storekeeper</option></select>
+      <label for="regPassword">Password</label><input id="regPassword" type="password" required minlength="4" autocomplete="new-password" placeholder="Create password">
+      <label for="regConfirm">Confirm password</label><input id="regConfirm" type="password" required minlength="4" autocomplete="new-password" placeholder="Confirm password">
+      <button class="auth-primary" type="submit">Register User</button>
+      <div class="auth-actions"><button type="button" class="auth-login" onclick="showAuthForm('login')">Login</button><button type="button" class="auth-reset" onclick="showAuthForm('reset')">Reset</button><button type="button" class="auth-cancel" onclick="cancelAuth()">Cancel</button></div>
+      <p id="registerMessage" role="status"></p>
+    </form>
+    <div id="newUsersBox" class="report-preview" hidden><h3>Just registered</h3><div class="table-wrap"></div></div>
+    <form id="resetForm" class="auth-form" hidden>
+      <label for="resetUsername">Username</label><input id="resetUsername" required placeholder="Your registered username">
+      <label for="resetUserId">User ID</label><input id="resetUserId" required placeholder="The User ID you registered with">
+      <label for="resetPassword">New password</label><input id="resetPassword" type="password" required minlength="4" placeholder="Enter new password">
+      <label for="resetConfirm">Confirm new password</label><input id="resetConfirm" type="password" required minlength="4" placeholder="Confirm new password">
+      <button class="auth-primary" type="submit">Reset Password</button>
+      <div class="auth-actions"><button type="button" class="auth-login" onclick="showAuthForm('login')">Login</button><button type="button" class="auth-register" onclick="showAuthForm('register')">New User</button><button type="button" class="auth-cancel" onclick="cancelAuth()">Cancel</button></div>
+      <p id="resetMessage" role="status"></p>
+    </form>
+  </div>
+</div>
+<div id="appShell" hidden>
+
+<header class="header">
+
+    <div class="logo">
+
+        <div class="logo-icon">
+            33M
+        </div>
+
+        <div>
+            <h1>Money Bior</h1>
+            <small>Hardware Management System</small>
+        </div>
+
+    </div>
+
+    <b>Admin</b>
+    <span id="modeBadge" style="padding:5px 12px;border-radius:999px;font-size:12px;font-weight:700;color:#fff;background:#64748b"></span>
+
+        
+</header>
+<nav class="sidebar">
+
+    <h3>MAIN MENU</h3>
+
+    <button class="menu active"
+            onclick="showPage('dashboard',this)">
+         Dashboard
+    </button>
+
+    <button class="menu"
+            onclick="showPage('products',this)">
+         Stock / Products
+    </button>
+
+    <button class="menu"
+            onclick="showPage('customers',this)">
+        Customers
+    </button>
+
+    <button class="menu"
+            onclick="showPage('suppliers',this)">
+    Suppliers
+    </button>
+
+    <button class="menu"
+            onclick="showPage('requests',this)">
+    Product Requests
+    </button>
+
+    <button class="menu"
+            onclick="showPage('sales',this)">
+     Sales / Transactions
+    </button>
+    
+    <button class="menu"
+            onclick="showPage('reports',this)">
+     report 
+    </button>
+
+<button class="menu logout-menu" type="button" onclick="logoutMoneyBior()">Logout</button>
+</nav>
+<main class="main">
+<section id="dashboard" class="page active">
+
+    <div class="welcome">
+        <div class="dashboard-brand-mark" aria-label="Money Bior logo"><span>⌂</span><b>MB</b><small>33M</small></div>
+        <h2>Welcome to Money Bior Hardware</h2>
+
+        <p>
+            Hardware Management Information System
+        </p>
+
+
+    </div>
+
+
+    <div class="cards">
+        <div class="card"><h3>Total Products</h3><div class="number" id="cnt-products">0</div></div>
+        <div class="card"><h3>Total Customers</h3><div class="number" id="cnt-customers">0</div></div>
+        <div class="card"><h3>Suppliers</h3><div class="number" id="cnt-suppliers">0</div></div>
+        <div class="card"><h3>Product Requests</h3><div class="number" id="cnt-requests">0</div></div>
+        <div class="card"><h3>Total Sales</h3><div class="number" id="cnt-sales">0</div></div>
+        <div class="card"><h3>Registered Users</h3><div class="number" id="cnt-users">0</div></div>
+    </div>
+
+</section>
+<section id="products" class="page">
+  <div class="box">
+    <h2>Stock / Product Management</h2>
+    <form onsubmit="return false;">
+      <div class="form-grid">
+        <div class="form-group"><label for="productId">Product ID</label><input id="productId" type="text" placeholder="Product ID"></div>
+        <div class="form-group"><label for="productName">Product Name</label><input id="productName" type="text" placeholder="Product Name"></div>
+        <div class="form-group"><label for="productSize">Product Size</label><input id="productSize" type="text" placeholder="Product Size"></div>
+        <div class="form-group"><label for="productQuantity">Quantity</label><input id="productQuantity" type="number" min="0" placeholder="Quantity"></div>
+        <div class="form-group"><label for="buyingPrice">Buying Price</label><input id="buyingPrice" type="number" min="0" step="0.01" placeholder="Buying price"></div>
+        <div class="form-group"><label for="sellingPrice">Selling Price</label><input id="sellingPrice" type="number" min="0" step="0.01" placeholder="Selling price"></div>
+      </div>
+      <button class="btn" type="button" onclick="saveProduct(this)">Register Product</button>
+      <button class="btn" type="button" onclick="showPage('reports', document.querySelector('[onclick*="reports"]'))">Open Reports</button>
+    </form>
+    <div id="productsRecords" class="report-preview"><h3>Saved Products / Stock</h3><div class="table-wrap"></div></div>
+  </div>
+</section>
+<section id="customers" class="page">
+
+    <div class="box">
+
+        <h2>Customer Management</h2>
+
+        <form onsubmit="return false;">
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label>Customer ID</label>
+                    <input type="text"
+                           placeholder="Customer ID">
+                </div>
+
+                <div class="form-group">
+                    <label>Customer Name</label>
+                    <input type="text"
+                           placeholder="Customer Name">
+                </div>
+
+                <div class="form-group">
+                    <label>Gender</label>
+
+                    <select>
+                        <option>Select Gender</option>
+                        <option>Male</option>
+                        <option>Female</option>
+                        <option>Other</option>
+                    </select>
+
+                </div>
+
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input type="tel"
+                           placeholder="Phone Number">
+                </div>
+                <div class="form-group">
+                    <label>Address</label>
+                    <input type="text"
+                           placeholder="address">
+                </div>
+            </div>
+
+            <button class="btn"
+                    type="button"
+                    onclick="saveCustomer(this)">
+                Register Customer
+            </button>
+
+        </form>
+        <div id="customersRecords" class="report-preview"><h3>Registered Customers</h3><div class="table-wrap"></div></div>
+    </div>
+
+</section>
+<section id="suppliers" class="page">
+  <div class="box">
+    <h2>Supplier Management</h2>
+    <form onsubmit="return false;">
+      <div class="form-grid">
+        <div class="form-group"><label for="supplierId">Supplier ID</label><input id="supplierId" type="text" placeholder="Supplier ID"></div>
+        <div class="form-group"><label for="supplierName">Supplier / Company Name</label><input id="supplierName" type="text" placeholder="Supplier name"></div>
+        <div class="form-group"><label for="supplierContact">Contact Person</label><input id="supplierContact" type="text" placeholder="Contact person"></div>
+        <div class="form-group"><label for="supplierPhone">Phone</label><input id="supplierPhone" type="tel" placeholder="Phone number"></div>
+        <div class="form-group"><label for="supplierEmail">Email (optional)</label><input id="supplierEmail" type="email" placeholder="Email address"></div>
+        <div class="form-group"><label for="supplierAddress">Address</label><input id="supplierAddress" type="text" placeholder="Address"></div>
+        <div class="form-group" style="grid-column:1/-1"><label for="supplierProducts">Products Supplied</label><input id="supplierProducts" type="text" placeholder="e.g. Cement, nails, paint"></div>
+      </div>
+      <button class="btn" type="button" onclick="saveSupplier(this)">Register Supplier</button>
+    </form>
+    <div id="suppliersRecords" class="report-preview"><h3>Registered Suppliers</h3><div class="table-wrap"></div></div>
+  </div>
+</section>
+<section id="requests" class="page">
+  <div class="box">
+    <h2>Product Request</h2>
+    <form onsubmit="return false;">
+      <div class="form-grid">
+        <div class="form-group"><label for="requestCustomerId">Customer ID</label><input id="requestCustomerId" type="text" placeholder="Customer ID"></div>
+        <div class="form-group"><label for="requestCustomerName">Customer Name</label><input id="requestCustomerName" type="text" placeholder="Customer Name"></div>
+        <div class="form-group"><label for="requestProductName">Product Name</label><input id="requestProductName" type="text" placeholder="Product Name"></div>
+        <div class="form-group"><label for="requestQuantity">Quantity</label><input id="requestQuantity" type="number" min="1" placeholder="Quantity"></div>
+        <div class="form-group"><label for="requestedBy">Requested By</label><input id="requestedBy" type="text" placeholder="Name"></div>
+      </div>
+      <button class="btn" type="button" onclick="saveProductRequest(this)">Submit Request</button>
+    </form>
+    <div id="requestsRecords" class="report-preview"><h3>Submitted Product Requests</h3><div class="table-wrap"></div></div>
+  </div>
+</section>
+
+<section id="sales" class="page">
+
+    <div class="box">
+
+        <h2>Sales / Transactions</h2>
+
+        <form onsubmit="return false;">
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label>Transaction ID</label>
+                    <input type="text"
+                           placeholder="Transaction ID">
+                </div>
+
+                <div class="form-group">
+                    <label>Customer</label>
+                    <input type="text"
+                           placeholder="Customer Name">
+                </div>
+
+                <div class="form-group">
+                    <label>Product</label>
+                    <input type="text"
+                           placeholder="Product">
+                </div>
+
+                <div class="form-group">
+                    <label>Quantity</label>
+                    <input type="number"
+                           placeholder="Quantity">
+                </div>
+
+                <div class="form-group">
+                    <label>Total Amount</label>
+                    <input type="number"
+                           placeholder="Amount">
+                </div>
+
+            </div>
+
+            <button class="btn"
+                    type="button"
+                    onclick="saveSale(this)">
+                Record Sale
+            </button>
+
+        </form>
+        <div id="salesRecords" class="report-preview"><h3>Recorded Sales</h3><div class="table-wrap"></div></div>
+    </div>
+</section>
+
+<section id="reports" class="page">
+
+    <div class="page-header">
+        <h2> Reports</h2>
+        <p>Click "View Report" to open a report on its own page, where you can print it.</p><button class="btn" type="button" onclick="exportBackup()">Download Data Backup</button>
+    </div>
+
+    <div class="report-cards">
+
+        <div class="report-card">
+            <div class="report-icon"></div>
+            <h3>Stock Report</h3>
+            <p>View information about products and available stock.</p>
+            <button onclick="viewReport('Stock Report')">
+                View Report
+            </button>
+        </div>
+
+        <div class="report-card">
+            <div class="report-icon"></div>
+            <h3>Customer Report</h3>
+            <p>View registered customer information.</p>
+            <button onclick="viewReport('Customer Report')">
+                View Report
+            </button>
+        </div>
+
+        <div class="report-card">
+            <div class="report-icon"></div>
+            <h3>Supplier Report</h3>
+            <p>View registered supplier information.</p>
+            <button onclick="viewReport('Supplier Report')">
+                View Report
+            </button>
+        </div>
+
+        <div class="report-card">
+            <div class="report-icon"></div>
+            <h3>Sales Report</h3>
+            <p>View sales and transaction information.</p>
+            <button onclick="viewReport('Sales Report')">
+                View Report
+            </button>
+        </div>
+
+        <div class="report-card">
+            <div class="report-icon"></div>
+            <h3>Product Request Report</h3>
+            <p>View product requests made in the system.</p>
+            <button onclick="viewReport('Product Request Report')">
+                View Report
+            </button>
+        </div>
+
+        <div class="report-card">
+            <div class="report-icon"></div>
+            <h3>User Report</h3>
+            <p>View system user information.</p>
+            <button onclick="viewReport('User Report')">
+                View Report
+            </button>
+        </div>
+
+        <div class="report-card">
+            <div class="report-icon"></div>
+            <h3>System Summary</h3>
+            <p>View a summary of the major system processes.</p>
+            <button onclick="viewReport('System Summary')">
+                View Report
+            </button>
+        </div>
+
+    </div>
+
+</section>
+
+<section id="reportView" class="page">
+    <div class="page-header no-print">
+        <button class="btn" type="button" onclick="showPage('reports',document.querySelector('.menu[onclick*=&quot;reports&quot;]'))">← Back to Reports</button>
+        <button class="btn" type="button" onclick="window.print()">🖨 Print Report</button>
+        <button class="btn" type="button" onclick="exportCurrentReport()">Export CSV</button>
+    </div>
+    <div class="report-preview" id="liveReportPreview">
+        <div class="print-head"><b>Money Bior Hardware</b><br><small>Hardware Management System</small></div>
+        <h3>Report</h3>
+        <p class="print-date"></p>
+        <div class="table-wrap"></div>
+    </div>
+</section>
+
+</main>
+
+</div>
+
+<script>
+const API='api.php';
+const HOME='http://localhost/MoneyBior_Database_Project/index.html';
+let DATA={products:[],customers:[],suppliers:[],users:[],requests:[],sales:[]};
+let currentReport='Stock Report';
+
+/* ---------- talking to the database (api.php) ---------- */
+/* mode: null (not decided yet), 'server' (XAMPP database) or 'local' (saved in this browser, no XAMPP needed) */
+let mode=null;
+class Unreachable extends Error{}
+async function serverCall(action,data){
+  let r,j;
+  if(location.protocol==='file:')throw new Unreachable('file');
+  try{r=await fetch('api.php',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,...data})});}
+  catch(e){throw new Unreachable('network');}
+  try{j=await r.json();}
+  catch(e){throw new Unreachable('badjson');}
+  if(r.status>=500&&/connect to MySQL/i.test(j.message||''))throw new Unreachable('mysql');
+  if(!r.ok||!j.success)throw new Error(j.message||'Request failed');
+  return j;
+}
+async function api(action,data={}){
+  if(mode==='local')return localApi(action,data);
+  if(mode==='server'){
+    try{return await serverCall(action,data);}
+    catch(e){if(e instanceof Unreachable)throw new Error('The XAMPP server stopped responding. Start Apache and MySQL again, or log out and log in to work offline.');throw e;}
+  }
+  /* mode not decided yet (login page): try the server first, otherwise work offline */
+  try{
+    const j=await serverCall(action,data);
+    if((action==='login'||action==='me')&&j.user){setMode('server');syncLocalToServer();}
+    return j;
+  }catch(e){
+    if(e instanceof Unreachable){
+      const j=await localApi(action,data);
+      if((action==='login'||action==='me')&&j.user)setMode('local');
+      return j;
+    }
+    if(action==='login'){   // wrong on the server? the user may have been registered offline
+      try{const j=await localApi(action,data);if(j.user){setMode('local');return j;}}catch(_){}
+    }
+    throw e;
+  }
+}
+function setMode(m){
+  mode=m;
+  const b=document.getElementById('modeBadge');
+  if(b){b.textContent=m==='server'?'● Online – XAMPP database':'● Offline mode – saved on this computer';
+        b.style.background=m==='server'?'#1b7a2f':'#b45309';}
+}
+
+/* ---------- offline engine: same actions as api.php, stored in this browser ---------- */
+const LKEY='moneybior_local_v1',SKEY='moneybior_local_session';
+function lget(){
+  try{const s=JSON.parse(localStorage.getItem(LKEY)||'null');if(s&&s.t)return s;}catch(e){}
+  return {seq:0,t:{accounts:[],products:[],customers:[],suppliers:[],system_users:[],product_requests:[],sales:[]}};
+}
+function lput(s){try{localStorage.setItem(LKEY,JSON.stringify(s));}catch(e){throw new Error('This browser cannot save data (storage is blocked or full).');}}
+function hashPw(username,pw){let h1=0xdeadbeef,h2=0x41c6ce57;const str='mb|'+username.toLowerCase()+'|'+pw;
+  for(let i=0;i<str.length;i++){const c=str.charCodeAt(i);h1=Math.imul(h1^c,2654435761);h2=Math.imul(h2^c,1597334677);}
+  h1=Math.imul(h1^(h1>>>16),2246822507)^Math.imul(h2^(h2>>>13),3266489909);
+  h2=Math.imul(h2^(h2>>>16),2246822507)^Math.imul(h1^(h1>>>13),3266489909);
+  return (4294967296*(2097151&h2)+(h1>>>0)).toString(36);}
+function nowStr(){const d=new Date(),p=n=>String(n).padStart(2,'0');return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes())+':'+p(d.getSeconds());}
+function lv(d,k){return String(d[k]??'').trim();}
+function lneed(arr){if(arr.some(v=>v===''))throw new Error('Please fill in all required fields.');}
+function ladd(s,table,row,uniqueKeys,dupMsg){
+  const low=x=>String(x).toLowerCase();
+  if(uniqueKeys.some(k=>s.t[table].some(r=>low(r[k])===low(row[k]))))throw new Error(dupMsg||'This ID or username already exists. Use a unique value.');
+  row.id=++s.seq;row.created_at=nowStr();row.synced=false;s.t[table].push(row);return row;
+}
+async function localApi(action,d){
+  const s=lget(),T=s.t;
+  const session=()=>{try{return JSON.parse(localStorage.getItem(SKEY)||'null');}catch(e){return null;}};
+  switch(action){
+    case 'register':{
+      const userId=lv(d,'userId'),full=lv(d,'fullName'),username=lv(d,'username'),role=lv(d,'role'),pw=String(d.password??'');
+      lneed([userId,full,username,role]);
+      if(pw.length<4)throw new Error('Password must be at least 4 characters.');
+      const low=x=>x.toLowerCase();
+      if(T.accounts.some(a=>low(a.username)===low(username))||T.system_users.some(u=>low(u.username)===low(username)||low(u.user_id)===low(userId)))
+        throw new Error('That User ID or username already exists.');
+      T.accounts.push({id:++s.seq,full_name:full,username,password_hash:hashPw(username,pw)});
+      ladd(s,'system_users',{user_id:userId,full_name:full,username,role},[]);
+      lput(s);return {success:true};}
+    case 'login':{
+      const a=T.accounts.find(x=>x.username.toLowerCase()===lv(d,'username').toLowerCase());
+      if(!a||a.password_hash!==hashPw(a.username,String(d.password??'')))throw new Error('Incorrect username or password.');
+      const u={id:a.id,fullName:a.full_name,username:a.username};
+      localStorage.setItem(SKEY,JSON.stringify(u));return {success:true,user:u};}
+    case 'me':return {success:true,user:session()};
+    case 'logout':localStorage.removeItem(SKEY);return {success:true};
+    case 'reset_password':{
+      const username=lv(d,'username'),userId=lv(d,'userId'),pw=String(d.password??'');
+      lneed([username,userId]);
+      if(pw.length<4)throw new Error('Password must be at least 4 characters.');
+      const su=T.system_users.find(u=>u.username.toLowerCase()===username.toLowerCase()&&u.user_id.toLowerCase()===userId.toLowerCase());
+      const a=T.accounts.find(x=>x.username.toLowerCase()===username.toLowerCase());
+      if(!su||!a)throw new Error('Username and User ID do not match any account.');
+      a.password_hash=hashPw(a.username,pw);lput(s);return {success:true};}
+  }
+  if(!session())throw new Error('Please log in first.');
+  switch(action){
+    case 'create_product':{
+      lneed([lv(d,'productId'),lv(d,'name'),lv(d,'size')]);
+      const q=Math.trunc(Number(d.quantity)||0),b=Number(d.buyingPrice)||0,p=Number(d.sellingPrice)||0;
+      if(q<0||b<0||p<0)throw new Error('Quantity and prices cannot be negative.');
+      ladd(s,'products',{product_id:lv(d,'productId'),name:lv(d,'name'),size:lv(d,'size'),quantity:q,buying_price:b,selling_price:p},['product_id']);
+      lput(s);return {success:true};}
+    case 'create_customer':
+      lneed([lv(d,'customerId'),lv(d,'name'),lv(d,'gender'),lv(d,'phone'),lv(d,'address')]);
+      ladd(s,'customers',{customer_id:lv(d,'customerId'),name:lv(d,'name'),gender:lv(d,'gender'),phone:lv(d,'phone'),address:lv(d,'address')},['customer_id']);
+      lput(s);return {success:true};
+    case 'create_supplier':
+      lneed([lv(d,'supplierId'),lv(d,'name'),lv(d,'contactPerson'),lv(d,'phone'),lv(d,'address'),lv(d,'productsSupplied')]);
+      ladd(s,'suppliers',{supplier_id:lv(d,'supplierId'),name:lv(d,'name'),contact_person:lv(d,'contactPerson'),phone:lv(d,'phone'),email:lv(d,'email'),address:lv(d,'address'),products_supplied:lv(d,'productsSupplied')},['supplier_id']);
+      lput(s);return {success:true};
+    case 'create_user':
+      lneed([lv(d,'userId'),lv(d,'fullName'),lv(d,'username'),lv(d,'role')]);
+      ladd(s,'system_users',{user_id:lv(d,'userId'),full_name:lv(d,'fullName'),username:lv(d,'username'),role:lv(d,'role')},['user_id','username']);
+      lput(s);return {success:true};
+    case 'create_request':{
+      lneed([lv(d,'customerId'),lv(d,'customerName'),lv(d,'productName'),lv(d,'requestedBy')]);
+      const q=Math.trunc(Number(d.quantity)||0);if(q<1)throw new Error('Quantity must be at least 1.');
+      ladd(s,'product_requests',{customer_id:lv(d,'customerId'),customer_name:lv(d,'customerName'),product_name:lv(d,'productName'),quantity:q,requested_by:lv(d,'requestedBy')},[]);
+      lput(s);return {success:true};}
+    case 'create_sale':{
+      lneed([lv(d,'transactionId'),lv(d,'customer'),lv(d,'product')]);
+      const q=Math.trunc(Number(d.quantity)||0),amt=Number(d.totalAmount)||0;
+      if(q<1||amt<0)throw new Error('Enter a valid quantity and total amount.');
+      const prod=lv(d,'product').toLowerCase();
+      const m=d.skipStock?null:T.products.find(p=>p.name.toLowerCase()===prod||p.product_id.toLowerCase()===prod);
+      if(m&&m.quantity<q)throw new Error('Not enough stock. Available quantity: '+m.quantity);
+      ladd(s,'sales',{transaction_id:lv(d,'transactionId'),customer:lv(d,'customer'),product:lv(d,'product'),quantity:q,total_amount:amt},['transaction_id']);
+      if(m){m.quantity-=q;m.synced=false;}
+      lput(s);return {success:true};}
+    case 'delete_record':{
+      const map={products:'products',customers:'customers',suppliers:'suppliers',requests:'product_requests',sales:'sales'};
+      const t=map[lv(d,'table')],id=Number(d.id)||0;
+      if(!t||id<1)throw new Error('Invalid delete request.');
+      T[t]=T[t].filter(r=>r.id!==id);lput(s);return {success:true};}
+    case 'list_all':{
+      const sorted=a=>a.slice().sort((x,y)=>y.id-x.id);
+      return {success:true,products:sorted(T.products),customers:sorted(T.customers),suppliers:sorted(T.suppliers),
+              users:sorted(T.system_users),requests:sorted(T.product_requests),sales:sorted(T.sales)};}
+  }
+  throw new Error('Unknown action.');
+}
+/* when XAMPP becomes available, copy records saved offline into the MySQL database */
+let syncing=false;
+async function syncLocalToServer(){
+  if(syncing)return;syncing=true;
+  try{
+    const s=lget(),T=s.t;let moved=0;
+    const jobs=[
+      ['products','create_product',r=>({productId:r.product_id,name:r.name,size:r.size,quantity:r.quantity,buyingPrice:r.buying_price,sellingPrice:r.selling_price})],
+      ['customers','create_customer',r=>({customerId:r.customer_id,name:r.name,gender:r.gender,phone:r.phone,address:r.address})],
+      ['suppliers','create_supplier',r=>({supplierId:r.supplier_id,name:r.name,contactPerson:r.contact_person,phone:r.phone,email:r.email,address:r.address,productsSupplied:r.products_supplied})],
+      ['system_users','create_user',r=>({userId:r.user_id,fullName:r.full_name,username:r.username,role:r.role})],
+      ['product_requests','create_request',r=>({customerId:r.customer_id,customerName:r.customer_name,productName:r.product_name,quantity:r.quantity,requestedBy:r.requested_by})],
+      ['sales','create_sale',r=>({transactionId:r.transaction_id,customer:r.customer,product:r.product,quantity:r.quantity,totalAmount:r.total_amount,skipStock:true})]
+    ];
+    for(const [table,action,map] of jobs){
+      for(const r of T[table]){
+        if(r.synced)continue;
+        try{await serverCall(action,map(r));moved++;r.synced=true;}
+        catch(e){if(e instanceof Unreachable)throw e;r.synced=true;}  // already exists on the server, or invalid: do not retry forever
+      }
+    }
+    lput(s);
+    if(moved){toast('✔ '+moved+' record(s) saved offline were copied to the XAMPP database.');await refreshAll();}
+  }catch(e){}
+  finally{syncing=false;}
+}
+function msg(id,text,ok){const el=document.getElementById(id);if(el){el.textContent=text;el.classList.toggle('ok',!!ok);}}
+
+/* ---------- pages ---------- */
+function showPage(pageId,button){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  const target=document.getElementById(pageId);
+  if(!target){console.error('Dashboard page not found:',pageId);return}
+  target.classList.add('active');
+  document.querySelectorAll('.menu').forEach(m=>m.classList.remove('active'));
+  if(button)button.classList.add('active');
+  renderAll();      // show what we already have straight away
+  refreshAll();     // then load the latest from the database
+}
+
+/* ---------- login page ---------- */
+const justRegistered=[];
+function renderJustRegistered(){
+  const box=document.getElementById('newUsersBox');
+  const show=!document.getElementById('registerForm').hidden&&justRegistered.length>0;
+  box.hidden=!show;if(!show)return;
+  box.querySelector('.table-wrap').innerHTML=tableHtml(justRegistered,[{label:'User ID',value:'user_id'},{label:'Name',value:'full_name'},{label:'Username',value:'username'},{label:'Role',value:'role'},{label:'Time',value:'time'}],'');
+}
+function showAuthForm(which){
+  ['login','register','reset'].forEach(n=>document.getElementById(n+'Form').hidden=n!==which);
+  const titles={login:['Welcome Back','Login to access your management dashboard'],register:['User Form','Register a user and create their login'],reset:['Reset Password','Enter your username and User ID to set a new password']};
+  document.getElementById('authTitle').textContent=titles[which][0];
+  document.getElementById('authSubtitle').textContent=titles[which][1];
+  document.querySelectorAll('#authScreen [role=status]').forEach(el=>el.textContent='');
+  renderJustRegistered();
+}
+function cancelAuth(){document.querySelectorAll('#authScreen input').forEach(i=>i.value='');document.getElementById('regRole').value='';showAuthForm('login');msg('authMessage','Form cleared.')}
+function enterDashboard(account){
+  document.getElementById('authScreen').hidden=true;
+  document.getElementById('appShell').hidden=false;
+  const label=document.querySelector('.header > b');if(label)label.textContent=account.fullName||account.username;
+  showPage('dashboard',document.querySelector('.menu'));
+}
+async function logoutMoneyBior(){
+  try{await api('logout');}catch(e){}
+  mode=null;localStorage.removeItem(SKEY);
+  document.getElementById('appShell').hidden=true;
+  document.getElementById('authScreen').hidden=false;
+  document.getElementById('loginForm').reset();showAuthForm('login');
+}
+document.getElementById('loginForm').addEventListener('submit',async e=>{e.preventDefault();
+  try{const j=await api('login',{username:loginUsername.value.trim(),password:loginPassword.value});enterDashboard(j.user);}
+  catch(err){msg('authMessage',err.message);}});
+document.getElementById('registerForm').addEventListener('submit',async e=>{e.preventDefault();
+  if(regPassword.value!==regConfirm.value)return msg('registerMessage','Passwords do not match.');
+  if(!regRole.value)return msg('registerMessage','Please select a role.');
+  try{await api('register',{userId:regUserId.value.trim(),fullName:regFullName.value.trim(),username:regUsername.value.trim(),role:regRole.value,password:regPassword.value});
+    justRegistered.unshift({user_id:regUserId.value.trim(),full_name:regFullName.value.trim(),username:regUsername.value.trim(),role:regRole.value,time:new Date().toLocaleTimeString()});
+    e.target.reset();msg('registerMessage','User registered. You can now log in.',true);renderJustRegistered();document.getElementById('newUsersBox').scrollIntoView({behavior:'smooth',block:'nearest'});}
+  catch(err){msg('registerMessage',err.message);}});
+document.getElementById('resetForm').addEventListener('submit',async e=>{e.preventDefault();
+  if(resetPassword.value!==resetConfirm.value)return msg('resetMessage','Passwords do not match.');
+  try{await api('reset_password',{username:resetUsername.value.trim(),userId:resetUserId.value.trim(),password:resetPassword.value});
+    e.target.reset();msg('resetMessage','Password updated. Return to login.',true);}
+  catch(err){msg('resetMessage',err.message);}});
+
+/* ---------- forms ---------- */
+function fieldsOf(form){return Array.from(form.querySelectorAll('input,select,textarea')).map((f,i)=>{let label='Field '+(i+1);if(f.id){const l=form.querySelector('label[for="'+f.id+'"]');if(l)label=l.textContent.trim()}if(label.startsWith('Field')){const p=f.previousElementSibling;if(p&&p.tagName==='LABEL')label=p.textContent.trim()}return {label,value:(f.value||'').trim(),element:f}})}
+function formValues(button){const form=button.closest('form');return form?fieldsOf(form):[]}
+function validate(vals){
+  if(vals.some(v=>!v.value)){alert('Please complete all fields before saving.');return false}
+  const bad=vals.find(v=>v.element.tagName==='SELECT'&&/^select\s/i.test(v.value));
+  if(bad){alert('Please choose a valid option from each selection list.');return false}
+  return true;
+}
+let toastTimer;
+function toast(text,bad){
+  let t=document.getElementById('toast');
+  if(!t){t=document.createElement('div');t.id='toast';document.body.appendChild(t)}
+  t.textContent=text;t.className='toast show'+(bad?' bad':'');
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),4000);
+}
+function showSaved(listId){
+  const box=document.getElementById(listId);if(!box)return;
+  box.scrollIntoView({behavior:'smooth',block:'center'});
+  const row=box.querySelector('tbody tr');
+  if(row&&!row.querySelector('.empty-row')){row.classList.remove('new-row');void row.offsetWidth;row.classList.add('new-row')}
+}
+async function submitForm(button,action,payload,okMessage,listId){
+  button.disabled=true;
+  try{
+    await api(action,payload);
+    button.closest('form').reset();
+    await refreshAll();
+    toast('✔ '+okMessage+' See it in the list below.');
+    showSaved(listId);
+  }
+  catch(e){alert(e.message);}
+  finally{button.disabled=false;}
+}
+function saveProduct(button){
+  const f=button.closest('form'),g=id=>f.querySelector('#'+id).value.trim();
+  if(!g('productId')||!g('productName')||!g('productSize')||!g('productQuantity')||!g('buyingPrice')||!g('sellingPrice'))return alert('Complete all product fields before registering.');
+  if(Number(g('productQuantity'))<0||Number(g('buyingPrice'))<0||Number(g('sellingPrice'))<0)return alert('Quantity and prices cannot be negative.');
+  submitForm(button,'create_product',{productId:g('productId'),name:g('productName'),size:g('productSize'),quantity:Number(g('productQuantity')),buyingPrice:Number(g('buyingPrice')),sellingPrice:Number(g('sellingPrice'))},'Product saved.','productsRecords');
+}
+function saveCustomer(button){
+  const v=formValues(button);if(!validate(v))return;
+  submitForm(button,'create_customer',{customerId:v[0].value,name:v[1].value,gender:v[2].value,phone:v[3].value,address:v[4].value},'Customer saved.','customersRecords');
+}
+function saveSupplier(button){
+  const f=button.closest('form'),g=id=>f.querySelector('#'+id).value.trim();
+  if(!g('supplierId')||!g('supplierName')||!g('supplierContact')||!g('supplierPhone')||!g('supplierAddress')||!g('supplierProducts'))return alert('Complete all supplier fields (email is optional).');
+  submitForm(button,'create_supplier',{supplierId:g('supplierId'),name:g('supplierName'),contactPerson:g('supplierContact'),phone:g('supplierPhone'),email:g('supplierEmail'),address:g('supplierAddress'),productsSupplied:g('supplierProducts')},'Supplier saved.','suppliersRecords');
+}
+function saveProductRequest(button){
+  const v=formValues(button);if(!validate(v))return;
+  const qty=Number(v[3].value);if(!Number.isFinite(qty)||qty<1)return alert('Quantity must be at least 1.');
+  submitForm(button,'create_request',{customerId:v[0].value,customerName:v[1].value,productName:v[2].value,quantity:qty,requestedBy:v[4].value},'Product request saved.','requestsRecords');
+}
+function saveSale(button){
+  const v=formValues(button);if(!validate(v))return;
+  const qty=Number(v[3].value),amount=Number(v[4].value);
+  if(!Number.isFinite(qty)||!Number.isFinite(amount)||qty<1||amount<0)return alert('Enter a valid quantity and total amount.');
+  submitForm(button,'create_sale',{transactionId:v[0].value,customer:v[1].value,product:v[2].value,quantity:qty,totalAmount:amount},'Sale recorded.','salesRecords');
+}
+
+/* ---------- tables ---------- */
+function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function money(v){return 'KSh '+Number(v||0).toLocaleString('en-KE',{minimumFractionDigits:2,maximumFractionDigits:2})}
+const COLS={
+  products:[{label:'Product ID',value:'product_id'},{label:'Name',value:'name'},{label:'Size',value:'size'},{label:'Quantity',value:'quantity'},{label:'Buying Price',value:r=>money(r.buying_price)},{label:'Selling Price',value:r=>money(r.selling_price)}],
+  customers:[{label:'Customer ID',value:'customer_id'},{label:'Name',value:'name'},{label:'Gender',value:'gender'},{label:'Phone',value:'phone'},{label:'Address',value:'address'}],
+  suppliers:[{label:'Supplier ID',value:'supplier_id'},{label:'Name',value:'name'},{label:'Contact Person',value:'contact_person'},{label:'Phone',value:'phone'},{label:'Email',value:'email'},{label:'Address',value:'address'},{label:'Products Supplied',value:'products_supplied'}],
+  users:[{label:'User ID',value:'user_id'},{label:'Full Name',value:'full_name'},{label:'Username',value:'username'},{label:'Role',value:'role'}],
+  requests:[{label:'Customer ID',value:'customer_id'},{label:'Customer Name',value:'customer_name'},{label:'Product',value:'product_name'},{label:'Quantity',value:'quantity'},{label:'Requested By',value:'requested_by'},{label:'Date',value:'created_at'}],
+  sales:[{label:'Transaction ID',value:'transaction_id'},{label:'Customer',value:'customer'},{label:'Product',value:'product'},{label:'Quantity',value:'quantity'},{label:'Total',value:r=>money(r.total_amount)},{label:'Date',value:'created_at'}]
+};
+const CSV_KEYS={
+  products:['product_id','name','size','quantity','buying_price','selling_price'],
+  customers:['customer_id','name','gender','phone','address'],
+  suppliers:['supplier_id','name','contact_person','phone','email','address','products_supplied'],
+  users:['user_id','full_name','username','role'],
+  requests:['customer_id','customer_name','product_name','quantity','requested_by','created_at'],
+  sales:['transaction_id','customer','product','quantity','total_amount','created_at']
+};
+const REPORTS={'Stock Report':'products','Customer Report':'customers','Supplier Report':'suppliers','Sales Report':'sales','Product Request Report':'requests','User Report':'users'};
+/* [container id, data key, can delete] */
+const VIEWS=[['productsRecords','products',1],['customersRecords','customers',1],['suppliersRecords','suppliers',1],['requestsRecords','requests',1],['salesRecords','sales',1],
+  ];
+
+function tableHtml(rows,columns,deleteKey,emptyText){
+  let html='<table class="data-table"><thead><tr>'+columns.map(c=>'<th>'+escapeHtml(c.label)+'</th>').join('')+(deleteKey?'<th>Action</th>':'')+'</tr></thead><tbody>';
+  if(!rows.length)html+='<tr><td class="empty-row" colspan="'+(columns.length+(deleteKey?1:0))+'">'+escapeHtml(emptyText||'No records saved yet.')+'</td></tr>';
+  else rows.forEach(r=>{html+='<tr>'+columns.map(c=>'<td>'+escapeHtml(typeof c.value==='function'?c.value(r):r[c.value])+'</td>').join('')+(deleteKey?'<td><button class="delete-btn" data-key="'+deleteKey+'" data-id="'+escapeHtml(r.id)+'">Delete</button></td>':'')+'</tr>'});
+  return html+'</tbody></table>';
+}
+function renderTable(containerId,rows,columns,deleteKey,emptyText){
+  const box=document.getElementById(containerId);if(!box)return;
+  const wrap=box.querySelector('.table-wrap');if(!wrap)return;
+  wrap.innerHTML=tableHtml(rows,columns,deleteKey,emptyText);
+  wrap.querySelectorAll('.delete-btn').forEach(btn=>btn.addEventListener('click',()=>deleteRecord(btn.dataset.key,btn.dataset.id)));
+  const h=box.querySelector('h3');
+  if(h){let p=h.querySelector('.count-pill');if(!p){p=document.createElement('span');p.className='count-pill';h.appendChild(p)}p.textContent=rows.length;
+    if(!h.querySelector('.refresh-btn')){const r=document.createElement('button');r.type='button';r.className='refresh-btn';r.textContent='Refresh';r.onclick=async()=>{await refreshAll();toast('✔ List refreshed.')};h.appendChild(r)}
+    let st=h.querySelector('.stamp');if(!st){st=document.createElement('span');st.className='stamp';h.appendChild(st)}
+    st.textContent=(!loadError&&lastLoaded)?'Updated '+lastLoaded:'';}
+}
+async function deleteRecord(table,id){
+  if(!confirm('Delete this record?'))return;
+  try{await api('delete_record',{table,id:Number(id)});await refreshAll();}catch(e){alert(e.message);}
+}
+function filterRegistered(){
+  const box=document.getElementById('regSearch');if(!box)return;const q=box.value.toLowerCase();
+  document.querySelectorAll('#registered tbody tr').forEach(tr=>{tr.hidden=!!q&&!tr.textContent.toLowerCase().includes(q)});
+}
+let loadError='',lastLoaded='';
+function renderAll(){
+  const empty=loadError?'Could not load data from the database: '+loadError:'No records saved yet.';
+  VIEWS.forEach(([id,key,del])=>renderTable(id,DATA[key],COLS[key],del?key:'',empty));
+  for(const k in DATA){const el=document.getElementById('cnt-'+k);if(el)el.textContent=DATA[k].length}
+  filterRegistered();
+  if(document.getElementById('reportView').classList.contains('active'))renderReport(currentReport);
+}
+async function refreshAll(){
+  if(document.getElementById('appShell').hidden)return;
+  try{const d=await api('list_all');for(const k in DATA)DATA[k]=d[k]||[];loadError='';lastLoaded=new Date().toLocaleTimeString();}
+  catch(e){loadError=e.message;console.warn(e);}
+  renderAll();
+}
+
+/* ---------- reports ---------- */
+function renderReport(name){
+  const preview=document.getElementById('liveReportPreview');
+  preview.querySelector('h3').textContent=name+' — Report Preview';
+  const note=preview.querySelector('.print-date');if(note)note.textContent='Printed: '+new Date().toLocaleString();
+  let rows,cols;
+  if(REPORTS[name]){rows=DATA[REPORTS[name]];cols=COLS[REPORTS[name]]}
+  else{
+    rows=[['Products','products'],['Customers','customers'],['Suppliers','suppliers'],['Users','users'],['Product Requests','requests'],['Sales','sales']].map(([label,k])=>({category:label,count:DATA[k].length}));
+    rows.push({category:'Total sales value',count:money(DATA.sales.reduce((t,r)=>t+Number(r.total_amount||0),0))});
+    cols=[{label:'Record Type',value:'category'},{label:'Total Records',value:'count'}];
+  }
+  preview.querySelector('.table-wrap').innerHTML=tableHtml(rows,cols,'',loadError?'Could not load data from the database: '+loadError:'No records available for this report.');
+  document.querySelectorAll('.report-card').forEach(c=>{const h=c.querySelector('h3');c.classList.toggle('selected',!!h&&h.textContent.trim()===name)});
+}
+function showReport(name){
+  currentReport=name;
+  showPage('reportView',document.querySelector('.menu[onclick*="reports"]'));
+  window.scrollTo(0,0);
+}
+function viewReport(name){showReport(name)}
+function downloadFile(name,content,type){const blob=new Blob([content],{type});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
+function exportBackup(){downloadFile('MoneyBior_Backup.json',JSON.stringify({exportedAt:new Date().toISOString(),...DATA},null,2),'application/json')}
+function exportCurrentReport(){
+  const key=REPORTS[currentReport];if(!key){alert('Choose a specific report before exporting CSV.');return}
+  const keys=CSV_KEYS[key];
+  const csv=[keys.join(','),...DATA[key].map(r=>keys.map(k=>'"'+String(r[k]??'').replace(/"/g,'""')+'"').join(','))].join('\r\n');
+  downloadFile(currentReport.replace(/[^a-z0-9]+/gi,'_')+'.csv',csv,'text/csv;charset=utf-8');
+}
+
+/* ---------- start-up ---------- */
+if(location.protocol==='file:')msg('authMessage','Offline mode: your data is saved on this computer. No XAMPP needed.',true);
+(async()=>{try{const j=await api('me');if(j.user)enterDashboard(j.user);}catch(e){}})();
+
+</script>
+
+</body>
+</html>
